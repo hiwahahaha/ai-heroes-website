@@ -142,7 +142,7 @@ export default defineConfig({
           ]
         },
         {
-          text: 'ProB版（门罗风）',
+          text: 'ProB版（AI名人智慧思维）',
           items: [
             { text: '引子', link: '/books/pro-b/chapter0' },
             { text: '试读内容', link: '/books/pro-b/' }
@@ -199,7 +199,7 @@ export default defineConfig({
     // 页脚
     // ==========================================
     footer: {
-      message: '版权所有 © 2024-2026 AI名人传',
+      message: '版权所有 © 山邑咨询 2026-2030 AI名人传',
       copyright: '基于 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可证开源'
     },
 
