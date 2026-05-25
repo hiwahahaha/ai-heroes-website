@@ -1,3 +1,9 @@
+/* 首页正文左右对齐 */
+.vp-doc p,
+.vp-doc li {
+  text-align: justify;
+}
+
 .video-carousel {
   position: relative;
   width: 100%;
