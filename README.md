@@ -61,5 +61,4 @@ website/
 ## 联系方式
 
 - 邮箱：3472770851@qq.com
-- GitHub：https://github.com/hiwahahaha/ai-heroes-website
 - 网站：https://star-sea-go.cn
