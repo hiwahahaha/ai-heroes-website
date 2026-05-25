@@ -6,15 +6,8 @@ export default defineConfig({
   description: '从图灵到GPT，一部AI背后真实英雄的史诗。14章故事+技术演进+批判性追问，适合AI启蒙到从业者。',
 
   head: [
-    // 轮播和模态窗全局脚本
-    ['script', { innerHTML: `
-function openDouyinModal(){document.getElementById('douyinModal').classList.add('show');document.body.style.overflow='hidden'}
-function closeDouyinModal(){document.getElementById('douyinModal').classList.remove('show');document.body.style.overflow=''}
-function openLink(url){window.open(url,'_blank')}
-function carouselScrollLeft(){document.getElementById('track').scrollBy({left:-320,behavior:'smooth'})}
-function carouselScrollRight(){document.getElementById('track').scrollBy({left:320,behavior:'smooth'})}
-window.addEventListener('keydown',function(e){if(e.key==='Escape')closeDouyinModal()});
-    `}],
+    // 轮播和模态窗全局脚本（外部文件确保挂载到window）
+    ['script', { src: '/carousel.js' }],
     // Favicon
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     // Theme color
