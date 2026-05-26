@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'AI名人传',
-  titleTemplate: ':root',
+  titleTemplate: ':title — AI名人传',
   description: '从图灵到GPT，一部AI背后真实英雄的史诗。14章故事+技术演进+批判性追问，适合AI启蒙到从业者。',
 
   head: [
