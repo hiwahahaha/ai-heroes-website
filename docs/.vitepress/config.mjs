@@ -1,8 +1,8 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'AI名人传',
-  titleTemplate: ':title — AI名人传',
+  title: '书籍:《AI名人传》',
+  titleTemplate: ':title — 书籍:《AI名人传》',
   description: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。',
 
   head: [
