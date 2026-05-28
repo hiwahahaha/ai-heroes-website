@@ -1,5 +1,5 @@
 /* nav bar logo 尺寸 */
-.VPNavBar .logo { width: 100px; height: 100px; }
+.VPNavBar .logo { width: 75px; height: 75px; }
 
 /* 显示页脚（覆盖VitePress默认隐藏） */
 .VPFooter.has-sidebar { display: block !important; }
