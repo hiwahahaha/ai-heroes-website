@@ -36,12 +36,11 @@ https://ocncn9p6wld7.feishu.cn/base/add/Oc7ba4t6edcakUrvny6c9aZKnAJ
 3.付款后自动发货到邮箱，见下文发货说明
 
 
-
 ### 方式二：线下微信、qq
 
+1.扫码添加微信StarSeaGo,付款后工作人员拉人入AI名人传群
 
-1.添加《AI名人传》 qq：3472770851（微信同号）
-
+![微信StarSeaGo](/contact.jpg)
 
 2.qq、微信沟通选定产品并付款
 
