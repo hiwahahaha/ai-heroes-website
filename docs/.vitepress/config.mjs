@@ -12,8 +12,9 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     // Theme color
     ['meta', { name: 'theme-color', content: '#f5f0e8' }],
-    // SEO
-    ['meta', { name: 'keywords', content: 'AI名人传,人工智能历史,图灵,辛顿,李飞飞,AI启蒙,AI书籍,ChatGPT,深度学习,人物传记' }],
+    // SEO - 安全头（通过meta实现，GitHub Pages不支持HTTP头）
+    ['meta', { 'http-equiv': 'X-Frame-Options', content: 'DENY' }],
+    ['meta', { name: 'keywords', content: 'AI名人传,人工智能,AI启蒙教育,AI应用,知识库,AI名人智慧思维,hermes实战,图灵,辛顿,李飞飞,黄仁勋,深度学习,人物传记,ChatGPT,AI书籍,AI启蒙' }],
     ['meta', { name: 'author', content: 'Oliver' }],
     ['meta', { name: 'robots', content: 'index, follow' }],
     // Open Graph
@@ -53,7 +54,11 @@ export default defineConfig({
       "about": [
         { "@type": "Thing", "name": "人工智能" },
         { "@type": "Thing", "name": "深度学习" },
-        { "@type": "Thing", "name": "人物传记" }
+        { "@type": "Thing", "name": "人物传记" },
+        { "@type": "Thing", "name": "AI启蒙教育" },
+        { "@type": "Thing", "name": "AI应用" },
+        { "@type": "Thing", "name": "知识库" },
+        { "@type": "Thing", "name": "AI名人智慧思维" }
       ],
       "hasPart": [
         { "@type": "BookChapter", "name": "第1章 — 图灵", "position": 1 },
@@ -73,10 +78,13 @@ export default defineConfig({
     }, null, 2) }],
   ],
 
+  // Clean URLs (no .html extension)
+  cleanUrls: true,
+
   // Sitemap (vitepress built-in)
   sitemap: {
     hostname: 'https://star-sea-go.cn',
-    lastmod: 'date'
+    lastmod: 'date',
   },
 
   themeConfig: {
