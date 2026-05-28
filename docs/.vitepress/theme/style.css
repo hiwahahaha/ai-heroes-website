@@ -5,3 +5,8 @@
   height: 60px;
   width: auto;
 }
+
+/* 强制所有页面显示页脚（覆盖VitePress默认has-sidebar隐藏行为） */
+.VPFooter.has-sidebar {
+  display: block !important;
+}
