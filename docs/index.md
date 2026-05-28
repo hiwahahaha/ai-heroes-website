@@ -260,22 +260,22 @@ next:
   <div class="carousel-track" id="track">
     <div class="video-card" onclick="window.open('https://www.douyin.com/video/7637813720252435755', '_blank')">
       <div class="play-btn">▶</div>
-      <img src="./ssqdf.jpg" alt="AI动态1" />
+      <img src="./ssqdf.jpg" alt="AI动态1" loading="lazy" />
       <div class="video-title">云南中专生AI手搓好莱坞大片</div>
     </div>
     <div class="video-card" onclick="window.open('https://36kr.com/video/3799110227112704', '_blank')">
       <div class="play-btn">▶</div>
-      <img src="./duardshipin.jpg" alt="AI动态4" />
+      <img src="./duardshipin.jpg" alt="AI动态4" loading="lazy" />
       <div class="video-title">大学的尽头是技校？！</div>
     </div>
     <div class="video-card" onclick="window.open('https://www.douyin.com/video/7637813720252435755', '_blank')">
       <div class="play-btn">▶</div>
-      <img src="https://picsum.photos/seed/aihero2/320/380" alt="AI动态2" />
+      <img src="https://picsum.photos/seed/aihero2/320/380" alt="AI动态2" loading="lazy" />
       <div class="video-title">第一章：艾伦·图灵</div>
     </div>
     <div class="video-card" onclick="window.open('https://www.douyin.com/video/7637813720252435755', '_blank')">
       <div class="play-btn">▶</div>
-      <img src="https://picsum.photos/seed/aihero3/320/380" alt="AI动态3" />
+      <img src="https://picsum.photos/seed/aihero3/320/380" alt="AI动态3" loading="lazy" />
       <div class="video-title">创作背后的故事</div>
     </div>
   </div>
