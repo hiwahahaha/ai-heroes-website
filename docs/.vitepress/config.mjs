@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'AI名人传',
   titleTemplate: ':title — AI名人传',
-  description: '从图灵到GPT，一部AI背后真实英雄的史诗。14章故事+技术演进+批判性追问，适合AI启蒙到从业者。',
+  description: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。',
 
   head: [
     // 轮播和模态窗全局脚本（外部文件确保挂载到window）
@@ -20,7 +20,7 @@ export default defineConfig({
     // Open Graph
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'AI名人传 — 从图灵到GPT的史诗历程' }],
-    ['meta', { property: 'og:description', content: '以人物为线索，以故事为载体，讲述AI背后的真实英雄' }],
+    ['meta', { property: 'og:description', content: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。' }],
     ['meta', { property: 'og:url', content: 'https://star-sea-go.cn/' }],
     ['meta', { property: 'og:site_name', content: 'AI名人传' }],
     ['meta', { property: 'og:locale', content: 'zh_CN' }],
@@ -31,7 +31,7 @@ export default defineConfig({
     // Twitter Card
     ['meta', { name: 'twitter:card', content: 'summary' }],
     ['meta', { name: 'twitter:title', content: 'AI名人传 — 从图灵到GPT的史诗历程' }],
-    ['meta', { name: 'twitter:description', content: '以人物为线索，以故事为载体，讲述AI背后的真实英雄' }],
+    ['meta', { name: 'twitter:description', content: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。' }],
     // Canonical
     ['link', { rel: 'canonical', href: 'https://star-sea-go.cn/' }],
     // Sitemap hint
@@ -42,7 +42,7 @@ export default defineConfig({
       "@type": "Book",
       "name": "AI名人传",
       "alternateName": "AI Heroes Biography",
-      "description": "从图灵到GPT，一部AI背后真实英雄的史诗。14章故事+技术演进+批判性追问，适合AI启蒙到从业者。",
+      "description": "《AI名人传：那些让\"龙虾\"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。",
       "author": {
         "@type": "Person",
         "name": "Oliver",
