@@ -1,5 +1,5 @@
 ---
-title: 购买渠道 — AI名人传版本对比与购买方式
+title: 购买渠道
 description: AI名人传各版本（Pro/Max/Mega/ProA/ProB）特点介绍、价格对比及购买渠道。
 ---
 
