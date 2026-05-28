@@ -106,9 +106,9 @@ export default defineConfig({
         {
           text: '欢迎来到AI名人传',
           items: [
-            { text: '序言：AI Agent迅猛发展', link: '/' },
-            { text: '创作初衷', link: '/' },
-            { text: '各版本介绍', link: '/books/' }
+            { text: '序言：AI重塑一切', link: '/#序言-ai重塑一切——走向有益的未来' },
+            { text: '创作初衷', link: '/#创作初衷' },
+            { text: '各版本介绍', link: '/#各版本介绍' }
           ]
         }
       ],
