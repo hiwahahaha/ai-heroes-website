@@ -132,7 +132,7 @@ export default defineConfig({
         {
           text: 'ProA版（艾萨克森风）',
           items: [
-            { text: '引子', link: '/books/pro-a/chapter0' },
+            { text: '引子', link: '/books/pro-a/' },
             { text: '第一章', link: '/books/pro-a/chapter1' },
             { text: '第二章', link: '/books/pro-a/chapter2' },
             { text: '第三章', link: '/books/pro-a/chapter3' },
