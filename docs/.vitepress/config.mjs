@@ -172,9 +172,9 @@ export default defineConfig({
       // 技术服务
       '/tech/': [
         {
-          text: '衍生作品与交流',
+          text: '技术服务',
           items: [
-            { text: 'AI名人传衍生作品及服务', link: '/tech/' }
+            { text: '技术交流与服务', link: '/tech/' }
           ]
         }
       ],
