@@ -12,8 +12,30 @@
 }
 
 /* ============================================================
-   表格样式全局调整
+   移动端：表格自动换行，不滚动
    ============================================================ */
+@media (max-width: 768px) {
+  /* 解除表格横向滚动，宽度自适应 */
+  .vp-doc table {
+    display: table;
+    overflow-x: visible;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  /* 所有单元格内容换行 */
+  .vp-doc th,
+  .vp-doc td {
+    white-space: normal !important;
+    word-break: break-word;
+  }
+
+  /* 第一列在移动端去掉 nowrap */
+  .vp-doc td:first-child,
+  .vp-doc th:first-child {
+    white-space: normal !important;
+  }
+}
 
 /* 所有表格标题行居中（.vp-doc提升权重覆盖VitePress默认） */
 .vp-doc th {
