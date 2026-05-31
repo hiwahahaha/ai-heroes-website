@@ -1,11 +1,10 @@
 ---
 title: 技术服务
 description: 数字化产品、技术交流与服务合作介绍。
+pageClass: page-tech
 ---
 
 # 技术服务
-
-### 交流服务
 
 我们提供以下技术交流服务：
 
