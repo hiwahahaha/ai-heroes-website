@@ -152,8 +152,7 @@ export default defineConfig({
         {
           text: 'ProB版（AI名人智慧思维）',
           items: [
-            { text: '引子', link: '/books/pro-b/chapter0' },
-            { text: '试读内容', link: '/books/pro-b/' }
+            { text: '版本介绍', link: '/books/pro-b/' }
           ]
         },
         {
