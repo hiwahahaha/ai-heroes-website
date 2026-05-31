@@ -22,8 +22,8 @@
    表格样式全局调整
    ============================================================ */
 
-/* 所有表格标题行居中 */
-table th {
+/* 所有表格标题行居中（使用.vp-doc提升权重覆盖VitePress默认）.vp-doc th */
+.vp-doc th {
   text-align: center;
 }
 
@@ -33,6 +33,6 @@ table th {
 .page-books table th:first-child,
 .page-purchase table td:first-child,
 .page-purchase table th:first-child {
-  padding-right: 1em;
+  padding-right: 2em;
   min-width: 5em;
 }
