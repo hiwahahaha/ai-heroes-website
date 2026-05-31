@@ -17,3 +17,22 @@
   white-space: nowrap;
   min-width: 120px;
 }
+
+/* ============================================================
+   表格样式全局调整
+   ============================================================ */
+
+/* 所有表格标题行居中 */
+table th {
+  text-align: center;
+}
+
+/* 版本对比类表格 — 第一列（版本列）增加一个字宽度
+   覆盖书籍作品页和购买渠道页 */
+.page-books table td:first-child,
+.page-books table th:first-child,
+.page-purchase table td:first-child,
+.page-purchase table th:first-child {
+  padding-right: 1em;
+  min-width: 5em;
+}
