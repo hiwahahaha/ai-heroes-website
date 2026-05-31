@@ -10,3 +10,10 @@
 .VPFooter.has-sidebar {
   display: block !important;
 }
+
+/* 技术服务页 - 服务类型列不换行 */
+.page-tech table td:first-child,
+.page-tech table th:first-child {
+  white-space: nowrap;
+  min-width: 120px;
+}
