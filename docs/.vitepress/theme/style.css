@@ -11,28 +11,19 @@
   display: block !important;
 }
 
-/* 技术服务页 - 服务类型列不换行 */
-.page-tech table td:first-child,
-.page-tech table th:first-child {
-  white-space: nowrap;
-  min-width: 120px;
-}
-
 /* ============================================================
    表格样式全局调整
    ============================================================ */
 
-/* 所有表格标题行居中（使用.vp-doc提升权重覆盖VitePress默认）.vp-doc th */
+/* 所有表格标题行居中（.vp-doc提升权重覆盖VitePress默认） */
 .vp-doc th {
   text-align: center;
 }
 
-/* 版本对比类表格 — 第一列（版本列）增加一个字宽度
-   覆盖书籍作品页和购买渠道页 */
-.page-books table td:first-child,
-.page-books table th:first-child,
-.page-purchase table td:first-child,
-.page-purchase table th:first-child {
+/* 所有表格第一列增加一个字宽度，服务类型列不换行 */
+.vp-doc td:first-child,
+.vp-doc th:first-child {
   padding-right: 2em;
   min-width: 5em;
+  white-space: nowrap;
 }
