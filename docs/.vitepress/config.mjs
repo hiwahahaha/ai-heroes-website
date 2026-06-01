@@ -6,6 +6,8 @@ export default defineConfig({
   description: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。',
 
   head: [
+    // Cloudflare Web Analytics（仅站长可见，Dashboard 内查看）
+    ['script', { defer: '', src: 'https://static.cloudflareinsights.com/beacon.min.js', 'data-cf-beacon': '{"token": "241686ff3ee54a40b454e9bd154b38ef"}' }],
     // 轮播和模态窗全局脚本（外部文件确保挂载到window）
     ['script', { src: '/carousel.js' }],
     // Favicon
