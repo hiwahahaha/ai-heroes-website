@@ -514,8 +514,28 @@ body {
   box-shadow: 0 8px 32px rgba(200,164,92,0.15);
 }
 
-/* ========== 响应式 ========== */
+/* ========== 移动端导航（保持一级链接可见） ========== */
 @media (max-width: 768px) {
+  /* 保持顶部导航菜单在移动端可见 */
+  .VPNavBarMenu {
+    display: flex !important;
+  }
+  .VPNavBarHamburger {
+    display: none !important;
+  }
+  /* 导航链接缩小适应窄屏 */
+  .VPNavBarMenuLink {
+    font-size: 0.82rem !important;
+    padding: 0 8px !important;
+    white-space: nowrap;
+  }
+  .VPNavBarTitle .title {
+    font-size: 0.95rem !important;
+  }
+  .VPNavBar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
   .VPHomeHero {
     padding: 48px 16px 40px !important;
   }
