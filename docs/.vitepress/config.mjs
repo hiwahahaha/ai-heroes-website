@@ -126,7 +126,7 @@ export default defineConfig({
       // 书籍作品
       '/books/': [
         {
-          text: 'Pro母版（试读）',
+          text: 'Pro版（试读）',
           items: [
             { text: '试读：第1/3/5章', link: '/books/pro/' }
           ]
