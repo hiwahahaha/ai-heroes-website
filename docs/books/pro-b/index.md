@@ -108,7 +108,7 @@ AI名人个个都是类比大师——辛顿把神经网络比作大脑皮层，
 
 想亲身体验「普通提问 vs 深度溯源」的认知差距？打开互动页面，输入任意概念，对比AI的两种回答模式。
 
-[▶ 进入「思维重构」互动体验 →](/books/pro-b/interactive/)（在新标签页打开）
+<a href="/books/pro-b/interactive/" target="_blank" style="display:inline-block;background:linear-gradient(115deg,#e6a017,#f7c35c);color:#0a0f1c;font-weight:800;padding:14px 36px;border-radius:60px;text-decoration:none;font-size:1rem;box-shadow:0 6px 18px rgba(247,195,92,0.4);">▶ 进入「思维重构」互动体验 →</a>
 
 ---
 
