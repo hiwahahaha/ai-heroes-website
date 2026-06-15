@@ -757,41 +757,7 @@
             }
         });
     }
-        callZhipu("你是一个AI助手，给出定义+优缺点+示例。", "概念：" + concept + "\n提示词：" + promptInput.value, 1500).then(function(apiRes) {
-            if (apiRes) {
-                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + apiRes.replace(/\n/g, '<br>') + '</div>';
-            } else {
-                var data = getDemoData(concept);
-                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + data.normal.replace(/\n/g, '<br>') + '</div>';
-            }
-            insightBar1.style.display = 'block'; 
-            insightText1.innerHTML = '这个回答比较"表面"，未挖掘深层逻辑。<span class="gold-highlight">《思维重构》深度模式</span>将呈现完整知识脉络！';
-            btnGroupAfter1.style.display = 'flex'; 
-            scrollToEl(btnGroupAfter1);
-        });
-    }
 
-    function simulateDeepAnalysis(concept) {
-        showEl(resultArea2); 
-        aiResponse2.innerHTML = '<div class="loading-spin"><div class="spinner"></div> 深度模式分析中（智谱GLM-4-Flash）...</div>';
-        btnGroupAfter2.style.display = 'none';
-
-        var systemPrompt = "你是一位顶尖的技术分析师。请基于可靠事实，对用户提出的概念进行深度剖析。严格按照以下维度：1. 起源与问题原点 2. 定义、要解决的问题、适用场景 3. 技术发展过程与技术迭代 4. 同时期对抗的技术观点 5. 现在与未来的发展趋势 6. 实践：成熟路径和具体落地方法。内容详实无字数限制。";
-        callZhipu(systemPrompt, "请对以下概念进行六维深度分析：" + concept, 4000).then(function(apiRes) {
-            var deepText;
-            if (apiRes) {
-                deepText = apiRes;
-            } else {
-                var data = getDemoData(concept);
-                deepText = data.deep;
-            }
-            deepAnalysisResult = deepText;
-            var formattedHtml = deepText.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
-            aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 思维重构</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
-            btnGroupAfter2.style.display = 'flex'; 
-            scrollToEl(btnGroupAfter2);
-        });
-    }
 
     var DEFAULT_MINDMAP = {
         branches: [
