@@ -402,6 +402,57 @@
             text-align: center;
             margin-top: 12px;
         }
+        .rate-limit-notice {
+            background: rgba(255, 100, 50, 0.1);
+            border: 1px solid rgba(255, 100, 50, 0.4);
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.8rem;
+            color: #ff8c5a;
+            text-align: center;
+            margin: 12px 0;
+            display: none;
+        }
+        .copy-area {
+            display: none;
+            margin: 16px 0;
+            padding: 14px 18px;
+            background: rgba(76, 201, 240, 0.06);
+            border: 1px solid rgba(76, 201, 240, 0.3);
+            border-radius: 16px;
+            text-align: center;
+        }
+        .copy-area .copy-btn {
+            background: rgba(76, 201, 240, 0.15);
+            border: 1px solid rgba(76, 201, 240, 0.5);
+            color: #4cc9f0;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .copy-area .copy-btn:hover {
+            background: rgba(76, 201, 240, 0.25);
+            transform: translateY(-1px);
+        }
+        .copy-area .copy-btn.copied {
+            background: rgba(76, 201, 240, 0.3);
+            color: white;
+        }
+        .tool-suggestion {
+            background: rgba(247, 195, 92, 0.06);
+            border: 1px solid rgba(247, 195, 92, 0.25);
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
 
         /* 移动端响应式 */
         @media (max-width: 768px) {
@@ -520,12 +571,18 @@
         <div class="card-header"><div class="icon-circle">🗺️</div><h2>思维脑图 · 化繁为简</h2><span class="step-num">STEP 4</span></div>
         <div class="mindmap-container" id="mindmapContainer">
             <div class="loading-spin" id="mindmapLoading" style="justify-content:center; padding:40px;"><div class="spinner"></div> 正在生成结构化脑图...</div>
+            <div class="rate-limit-notice" id="mindmapRateLimit">⚠️ 智谱GLM-4-Flash大模型当前达到速率限制，已切换为预置示例数据。请稍后时段再尝试获取实时生成。</div>
             <div class="mindmap-svg-wrapper" id="mindmapSvgWrapper" style="display:none;">
                 <svg id="mindmapSvg" class="mindmap-svg" viewBox="0 0 900 480"></svg>
             </div>
             <!-- 移动端文本脑图 -->
             <div id="mindmapTextList" style="display:none;"></div>
         </div>
+        <div class="copy-area" id="copyArea">
+            <div style="margin-bottom:10px; font-size:0.85rem; color:var(--text-secondary);">📋 将深度分析结果复制到剪贴板，用于其他工具生成脑图：</div>
+            <button class="copy-btn" id="btnCopyDeepResult">📋 一键复制深度分析结果</button>
+        </div>
+        <div class="tool-suggestion" id="toolSuggestion" style="display:none;">💡 如需生成更专业的思维导图，推荐使用 <strong>XMind</strong>、<strong>ProcessOn</strong>、<strong>Whimsical</strong> 等专业脑图工具，或使用 DeepSeek、Kimi 等其他大模型生成更详细的结构。</div>
         <div class="btn-group"><button class="btn btn-accent btn-lg" id="btnToSocratic">🧠 苏格拉底反问</button><button class="btn btn-ghost" id="btnSkipSocratic">跳过反问，直达思维支柱</button></div>
     </div>
 
@@ -647,9 +704,11 @@
     var lastRateLimitTime = 0;
 
     // 返回: { type: 'api', content: '...' } | { type: 'rate_limited' } | { type: 'error' }
-    function callZhipu(system, user, maxTokens) {
+    // 自动重试3次（超时/网络错误），速率限制不重试
+    function callZhipu(system, user, maxTokens, retries) {
         if (!maxTokens) maxTokens = 2000;
-        // 检查冷却期
+        if (retries === undefined) retries = 3;
+        // 检查冷却期（如果上次是429，直接返回rate_limited）
         if (Date.now() - lastRateLimitTime < RATE_LIMIT_COOLDOWN_MS) {
             return Promise.resolve({ type: 'rate_limited' });
         }
@@ -666,14 +725,21 @@
                 lastRateLimitTime = Date.now();
                 return { type: 'rate_limited' };
             }
-            if (!response.ok) return { type: 'error' };
+            if (!response.ok) {
+                // 非429错误，有剩余重试次数则重试
+                if (retries > 0) return callZhipu(system, user, maxTokens, retries - 1);
+                return { type: 'error' };
+            }
             return response.json().then(function(data) {
                 var content = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
                 if (content) return { type: 'api', content: content };
+                if (retries > 0) return callZhipu(system, user, maxTokens, retries - 1);
                 return { type: 'error' };
             });
         }).catch(function() {
             clearTimeout(timeoutId);
+            // 超时/网络错误，有剩余重试次数则重试
+            if (retries > 0) return callZhipu(system, user, maxTokens, retries - 1);
             return { type: 'error' };
         });
     }
@@ -700,6 +766,7 @@
     const resultArea2 = $('resultArea2'), aiResponse2 = $('aiResponse2'), btnGroupAfter2 = $('btnGroupAfter2');
     const mindmapSvg = $('mindmapSvg'), mindmapLoading = $('mindmapLoading'), mindmapSvgWrapper = $('mindmapSvgWrapper'), mindmapTextList = $('mindmapTextList');
     const socraticList = $('socraticList');
+    const copyArea = $('copyArea'), toolSuggestion = $('toolSuggestion'), btnCopyDeepResult = $('btnCopyDeepResult');
 
     function scrollToEl(el) { 
         setTimeout(function(){ 
@@ -738,10 +805,13 @@
 
         callZhipu("你是一个AI助手，给出定义+优缺点+示例。", "概念：" + concept + "\n提示词：" + promptInput.value, 1500).then(function(res) {
             if (res && res.type === 'api') {
-                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答（智谱GLM-4-Flash）</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + res.content.replace(/\n/g, '<br>') + '</div>';
+                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答（智谱GLM-4-Flash实时生成）</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + res.content.replace(/\n/g, '<br>') + '</div>';
             } else {
                 var data = getDemoData(concept);
-                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + data.normal.replace(/\n/g, '<br>') + '</div>';
+                var rateMsg = (res && res.type === 'rate_limited')
+                    ? '<div class="rate-limit-notice" style="display:block; margin-bottom:12px;">⚠️ 智谱GLM-4-Flash大模型当前达到速率限制，已切换为预置示例数据。请稍后时段再尝试获取实时生成内容。</div>'
+                    : '<div class="rate-limit-notice" style="display:block; margin-bottom:12px;">⚠️ 大模型调用异常（已重试3次），已切换为预置示例数据。请稍后时段再尝试。</div>';
+                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答（预置示例）</span>' + rateMsg + '<div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + data.normal.replace(/\n/g, '<br>') + '</div>';
             }
             insightBar1.style.display = 'block';
             insightText1.innerHTML = '这个回答比较"表面"，未挖掘深层逻辑。<span class="gold-highlight">《思维重构》深度模式</span>将呈现完整知识脉络！';
@@ -763,13 +833,16 @@
             if (res && res.type === 'api') {
                 deepAnalysisResult = res.content;
                 var formattedHtml = res.content.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
-                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 认知重构（智谱GLM-4-Flash）</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
+                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 认知重构（智谱GLM-4-Flash实时生成）</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
             } else {
                 // 速率限制/失败 → 降级到预置数据
                 var data = getDemoData(concept);
                 deepAnalysisResult = data.deep;
+                var rateMsg2 = (res && res.type === 'rate_limited')
+                    ? '<div class="rate-limit-notice" style="display:block; margin-bottom:12px;">⚠️ 智谱GLM-4-Flash大模型当前达到速率限制，已切换为预置示例数据。请稍后时段再尝试获取实时生成深度分析。</div>'
+                    : '<div class="rate-limit-notice" style="display:block; margin-bottom:12px;">⚠️ 大模型调用异常（已重试3次），已切换为预置示例数据。请稍后时段再尝试。</div>';
                 var formattedHtml = data.deep.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
-                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 思维重构</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
+                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 思维重构（预置示例）</span>' + rateMsg2 + '<div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
             }
             btnGroupAfter2.style.display = 'flex'; 
             scrollToEl(btnGroupAfter2);
@@ -836,6 +909,8 @@
         mindmapSvgWrapper.style.display='none'; 
         mindmapTextList.style.display='none';
         mindmapLoading.style.display='flex';
+        var rlNotice = $('mindmapRateLimit');
+        if (rlNotice) rlNotice.style.display = 'none';
 
         // 调用大模型生成脑图结构
         var sysPrompt = "你是一个思维导图设计助手。将用户给出的概念拆解为6个维度，每个维度配3个子项。返回JSON格式：{\"branches\":[{\"label\":\"维度名\",\"items\":[\"项1\",\"项2\",\"项3\"]}]}。不要其他文字。";
@@ -845,12 +920,14 @@
                     var data = JSON.parse(res.content);
                     if (data.branches && data.branches.length >= 4) {
                         renderMindmap(concept, data);
+                        if (rlNotice) rlNotice.style.display = 'none';
                         return;
                     }
                 } catch(e) {}
             }
             // 速率限制/失败 → 降级到预置脑图
             renderMindmap(concept, DEFAULT_MINDMAP);
+            if (rlNotice) rlNotice.style.display = 'block';
         });
     }
 
@@ -871,6 +948,9 @@
                 }
             }
             // 速率限制/失败 → 降级到预置问题
+            var rateMsg3 = (res && res.type === 'rate_limited')
+                ? '<li style="background:rgba(255,100,50,0.08); border-left:5px solid #ff8c5a; padding:12px 16px; border-radius:12px; font-size:0.85rem; color:#ff8c5a; text-align:center; list-style:none; margin-bottom:12px;">⚠️ 智谱GLM-4-Flash大模型当前达到速率限制，已切换为预置示例问题。请稍后时段再尝试获取实时生成。</li>'
+                : '<li style="background:rgba(255,100,50,0.08); border-left:5px solid #ff8c5a; padding:12px 16px; border-radius:12px; font-size:0.85rem; color:#ff8c5a; text-align:center; list-style:none; margin-bottom:12px;">⚠️ 大模型调用异常（已重试3次），已切换为预置示例问题。请稍后时段再尝试。</li>';
             var fallback = [
                 '没有「' + concept + '」这回事，AI的答案会有什么不同？它的存在解决了什么问题？',
                 '这个概念成立的前提假设是什么？如果知识库本身就有偏见呢？',
@@ -878,7 +958,7 @@
                 '它与现有技术是什么关系？互补还是竞争？',
                 '如果5年后这个方向被证明是错的，最可能的原因是什么？'
             ];
-            socraticList.innerHTML = fallback.map(function(q, idx) {
+            socraticList.innerHTML = rateMsg3 + fallback.map(function(q, idx) {
                 return '<li><span class="q-num">' + (idx + 1) + '</span> ' + q + '</li>';
             }).join('');
         });
@@ -921,6 +1001,9 @@
         showEl(section3); 
         mindmapShown = true;
         drawMindmap(currentConcept); 
+        // 显示一键复制区域和工具建议
+        if (copyArea) copyArea.style.display = 'block';
+        if (toolSuggestion) toolSuggestion.style.display = 'block';
         scrollToEl(section3);
     };
     
@@ -958,6 +1041,56 @@
     $('btnFinalExit').onclick = function(){
         sectionPurchase.innerHTML='<div style="text-align:center;padding:40px"><div style="font-size:56px">✨</div><h3>感谢体验「思维重构」</h3><p class="gold-highlight">不是AI在思考，是你在思考。</p><p>山邑咨询 · star-sea-go.cn</p></div>';
     };
+    
+    // 一键复制深度分析结果
+    if (btnCopyDeepResult) {
+        btnCopyDeepResult.onclick = function(){
+            var text = deepAnalysisResult || '';
+            if (!text) { btnCopyDeepResult.textContent = '⚠️ 暂无深度分析结果'; return; }
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function(){
+                    btnCopyDeepResult.textContent = '✅ 已复制！';
+                    btnCopyDeepResult.classList.add('copied');
+                    setTimeout(function(){
+                        btnCopyDeepResult.textContent = '📋 一键复制深度分析结果';
+                        btnCopyDeepResult.classList.remove('copied');
+                    }, 2000);
+                }).catch(function(){
+                    // fallback
+                    var ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    btnCopyDeepResult.textContent = '✅ 已复制！';
+                    btnCopyDeepResult.classList.add('copied');
+                    setTimeout(function(){
+                        btnCopyDeepResult.textContent = '📋 一键复制深度分析结果';
+                        btnCopyDeepResult.classList.remove('copied');
+                    }, 2000);
+                });
+            } else {
+                // 旧浏览器 fallback
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                btnCopyDeepResult.textContent = '✅ 已复制！';
+                btnCopyDeepResult.classList.add('copied');
+                setTimeout(function(){
+                    btnCopyDeepResult.textContent = '📋 一键复制深度分析结果';
+                    btnCopyDeepResult.classList.remove('copied');
+                }, 2000);
+            }
+        };
+    }
 })();
 </script>
 </body>
