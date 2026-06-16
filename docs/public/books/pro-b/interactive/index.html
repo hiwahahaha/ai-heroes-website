@@ -493,7 +493,7 @@
         <div style="margin: 16px 0;"><label>请替换输入概念/名词或问题（示例已输入）：</label><input type="text" id="conceptInput" value="RAG检索增强生成"></div>
         <div style="margin: 12px 0;"><label>请替换输入你的提示词（示例已输入）：</label><textarea id="promptInput">请解释一下这个概念是什么，优缺点，举例说明。</textarea></div>
         <button class="btn btn-primary" id="btnSubmitQuery">✉ 提交，看AI怎么回答</button>
-        <div class="demo-note">⚡ 预置示例即显 + 后台异步调用智谱GLM-4-Flash（成功则升级内容）</div>
+        <div class="demo-note">⚡ 优先调用智谱GLM-4-Flash大模型实时生成，速率限制时切换预置示例</div>
         <div id="resultArea1" class="hidden">
             <div class="ai-response-box" id="aiResponse1"><span class="ai-label">🤖 普通模式回答</span></div>
             <div class="insight-bar" id="insightBar1" style="display:none;">💡 <span id="insightText1"></span></div>
@@ -642,10 +642,17 @@
     // ============================================================
     var ZHIPU_API_KEY = '78038e5a905e4c45b053dd7f92bc1b60.kSpYYFR6BFpaHBew';
     var ZHIPU_BASE_URL = 'https://open.bigmodel.cn/api/paas/v4/';
-    var API_TIMEOUT_MS = 15000; // 15秒超时
+    var API_TIMEOUT_MS = 30000; // 30秒超时（优先等待大模型）
+    var RATE_LIMIT_COOLDOWN_MS = 120000; // 遇到限速后2分钟内不再重试
+    var lastRateLimitTime = 0;
 
+    // 返回: { type: 'api', content: '...' } | { type: 'rate_limited' } | { type: 'error' }
     function callZhipu(system, user, maxTokens) {
         if (!maxTokens) maxTokens = 2000;
+        // 检查冷却期
+        if (Date.now() - lastRateLimitTime < RATE_LIMIT_COOLDOWN_MS) {
+            return Promise.resolve({ type: 'rate_limited' });
+        }
         var controller = new AbortController();
         var timeoutId = setTimeout(function() { controller.abort(); }, API_TIMEOUT_MS);
         return fetch(ZHIPU_BASE_URL + 'chat/completions', {
@@ -655,13 +662,19 @@
             signal: controller.signal
         }).then(function(response) {
             clearTimeout(timeoutId);
-            if (!response.ok) return null;
+            if (response.status === 429) {
+                lastRateLimitTime = Date.now();
+                return { type: 'rate_limited' };
+            }
+            if (!response.ok) return { type: 'error' };
             return response.json().then(function(data) {
-                return data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
+                var content = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
+                if (content) return { type: 'api', content: content };
+                return { type: 'error' };
             });
         }).catch(function() {
             clearTimeout(timeoutId);
-            return null;
+            return { type: 'error' };
         });
     }
 
@@ -719,19 +732,21 @@
         insightBar1.style.display = 'none';
         btnGroupAfter1.style.display = 'none';
 
-        // 先立即显示预置数据（零等待）
-        var data = getDemoData(concept);
-        aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + data.normal.replace(/\n/g, '<br>') + '</div>';
-        insightBar1.style.display = 'block'; 
-        insightText1.innerHTML = '这个回答比较"表面"，未挖掘深层逻辑。<span class="gold-highlight">《思维重构》深度模式</span>将呈现完整知识脉络！';
-        btnGroupAfter1.style.display = 'flex'; 
-        scrollToEl(btnGroupAfter1);
+        // 显示加载状态，优先等待大模型
+        aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答</span><div class="loading-spin" style="justify-content:center; padding:30px;"><div class="spinner"></div> 智谱GLM-4-Flash思考中...</div>';
+        scrollToEl(resultArea1);
 
-        // 后台异步尝试 API，超时10s，成功则升级内容
-        callZhipu("你是一个AI助手，给出定义+优缺点+示例。", "概念：" + concept + "\n提示词：" + promptInput.value, 1500).then(function(apiRes) {
-            if (apiRes) {
-                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答（智谱AI）</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + apiRes.replace(/\n/g, '<br>') + '</div>';
+        callZhipu("你是一个AI助手，给出定义+优缺点+示例。", "概念：" + concept + "\n提示词：" + promptInput.value, 1500).then(function(res) {
+            if (res && res.type === 'api') {
+                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答（智谱GLM-4-Flash）</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + res.content.replace(/\n/g, '<br>') + '</div>';
+            } else {
+                var data = getDemoData(concept);
+                aiResponse1.innerHTML = '<span class="ai-label">🤖 普通模式回答</span><div style="margin-top:12px; line-height:1.7; white-space:pre-wrap;">' + data.normal.replace(/\n/g, '<br>') + '</div>';
             }
+            insightBar1.style.display = 'block';
+            insightText1.innerHTML = '这个回答比较"表面"，未挖掘深层逻辑。<span class="gold-highlight">《思维重构》深度模式</span>将呈现完整知识脉络！';
+            btnGroupAfter1.style.display = 'flex';
+            scrollToEl(btnGroupAfter1);
         });
     }
 
@@ -739,22 +754,25 @@
         showEl(resultArea2); 
         btnGroupAfter2.style.display = 'none';
 
-        // 先立即显示预置数据（零等待）
-        var data = getDemoData(concept);
-        deepAnalysisResult = data.deep;
-        var formattedHtml = data.deep.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
-        aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 思维重构</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
-        btnGroupAfter2.style.display = 'flex'; 
-        scrollToEl(btnGroupAfter2);
+        // 显示加载状态，优先等待大模型
+        aiResponse2.innerHTML = '<span class="ai-label">🔬 深度溯源模式 · 认知重构</span><div class="loading-spin" style="justify-content:center; padding:30px;"><div class="spinner"></div> 智谱GLM-4-Flash深度分析中...</div>';
+        scrollToEl(resultArea2);
 
-        // 后台异步尝试 API
         var systemPrompt = "你是一位顶尖的技术分析师。请基于可靠事实，对用户提出的概念进行深度剖析。严格按照以下维度：1. 起源与问题原点 2. 定义、要解决的问题、适用场景 3. 技术发展过程与技术迭代 4. 同时期对抗的技术观点 5. 现在与未来的发展趋势 6. 实践：成熟路径和具体落地方法。内容详实无字数限制。";
-        callZhipu(systemPrompt, "请对以下概念进行六维深度分析：" + concept, 4000).then(function(apiRes) {
-            if (apiRes) {
-                deepAnalysisResult = apiRes;
-                var newHtml = apiRes.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
-                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 认知重构（智谱AI）</span><div style="margin-top:12px; line-height:1.7;">' + newHtml + '</div>';
+        callZhipu(systemPrompt, "请对以下概念进行六维深度分析：" + concept, 4000).then(function(res) {
+            if (res && res.type === 'api') {
+                deepAnalysisResult = res.content;
+                var formattedHtml = res.content.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
+                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 认知重构（智谱GLM-4-Flash）</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
+            } else {
+                // 速率限制/失败 → 降级到预置数据
+                var data = getDemoData(concept);
+                deepAnalysisResult = data.deep;
+                var formattedHtml = data.deep.replace(/\n/g, '<br>').replace(/(\d+\.\s*\*\*)/g, '<span class="gold-highlight">$1</span>').replace(/\*\*(.*?)\*\*/g, '<strong class="gold-highlight">$1</strong>');
+                aiResponse2.innerHTML = '<span class="ai-label">🔬 深度模式 · 思维重构</span><div style="margin-top:12px; line-height:1.7;">' + formattedHtml + '</div>';
             }
+            btnGroupAfter2.style.display = 'flex'; 
+            scrollToEl(btnGroupAfter2);
         });
     }
 
@@ -817,34 +835,52 @@
     function drawMindmap(concept) {
         mindmapSvgWrapper.style.display='none'; 
         mindmapTextList.style.display='none';
-        mindmapLoading.style.display='none';
-        renderMindmap(concept, DEFAULT_MINDMAP);
+        mindmapLoading.style.display='flex';
+
+        // 调用大模型生成脑图结构
+        var sysPrompt = "你是一个思维导图设计助手。将用户给出的概念拆解为6个维度，每个维度配3个子项。返回JSON格式：{\"branches\":[{\"label\":\"维度名\",\"items\":[\"项1\",\"项2\",\"项3\"]}]}。不要其他文字。";
+        callZhipu(sysPrompt, "概念：" + concept + "，请按六维框架拆解脑图。", 2000).then(function(res) {
+            if (res && res.type === 'api') {
+                try {
+                    var data = JSON.parse(res.content);
+                    if (data.branches && data.branches.length >= 4) {
+                        renderMindmap(concept, data);
+                        return;
+                    }
+                } catch(e) {}
+            }
+            // 速率限制/失败 → 降级到预置脑图
+            renderMindmap(concept, DEFAULT_MINDMAP);
+        });
     }
 
     function renderSocraticQuestions(concept) {
-        // 立即显示预置问题
-        var fallback = [
-            '没有「' + concept + '」这回事，AI的答案会有什么不同？它的存在解决了什么问题？',
-            '这个概念成立的前提假设是什么？如果知识库本身就有偏见呢？',
-            '找一个反例：什么场景下这个技术反而比普通方法更差？',
-            '它与现有技术是什么关系？互补还是竞争？',
-            '如果5年后这个方向被证明是错的，最可能的原因是什么？'
-        ];
-        socraticList.innerHTML = fallback.map(function(q, idx) {
-            return '<li><span class="q-num">' + (idx + 1) + '</span> ' + q + '</li>';
-        }).join('');
+        // 显示加载，优先等待大模型
+        socraticList.innerHTML = '<li class="socratic-loading"><div class="spinner"></div> 智谱GLM-4-Flash生成苏格拉底反问中...</li>';
 
-        // 后台异步尝试 API 升级
+        // 后台异步调用大模型
         var systemPrompt = "你是苏格拉底式提问大师。针对概念生成5个启发反问，输出格式每行一个问题以数字序号开头。";
-        callZhipu(systemPrompt, "概念：" + concept + "\n请生成5个苏格拉底式反问问题，帮助用户深入思考这个概念的底层逻辑。", 2000).then(function(apiRes) {
-            if (apiRes) {
-                var lines = apiRes.split('\n').filter(function(l) { return /^\d+\./.test(l.trim()); });
+        callZhipu(systemPrompt, "概念：" + concept + "\n请生成5个苏格拉底式反问问题，帮助用户深入思考这个概念的底层逻辑。", 2000).then(function(res) {
+            if (res && res.type === 'api') {
+                var lines = res.content.split('\n').filter(function(l) { return /^\d+\./.test(l.trim()); });
                 if (lines.length >= 3) {
                     socraticList.innerHTML = lines.slice(0, 5).map(function(q, idx) {
                         return '<li><span class="q-num">' + (idx + 1) + '</span> ' + q.replace(/^\d+\.\s*/, '') + '</li>';
                     }).join('');
+                    return;
                 }
             }
+            // 速率限制/失败 → 降级到预置问题
+            var fallback = [
+                '没有「' + concept + '」这回事，AI的答案会有什么不同？它的存在解决了什么问题？',
+                '这个概念成立的前提假设是什么？如果知识库本身就有偏见呢？',
+                '找一个反例：什么场景下这个技术反而比普通方法更差？',
+                '它与现有技术是什么关系？互补还是竞争？',
+                '如果5年后这个方向被证明是错的，最可能的原因是什么？'
+            ];
+            socraticList.innerHTML = fallback.map(function(q, idx) {
+                return '<li><span class="q-num">' + (idx + 1) + '</span> ' + q + '</li>';
+            }).join('');
         });
     }
 
