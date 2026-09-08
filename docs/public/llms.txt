@@ -1,0 +1,24 @@
+# AI名人传
+
+> 给孩子讲AI的人工智能启蒙书。通过100位AI名人的真实故事（从图灵到GPT），激发学生与孩子的学习兴趣，轻松开启AI启蒙，快速入门人工智能。
+
+## 简介
+
+《AI名人传》是 Oliver（山邑咨询）创作的人工智能启蒙读物，以人物为线索、以故事为载体，讲述图灵、辛顿、李飞飞等AI名人的真实人生与智慧，让读者在故事中理解神经网络、深度学习、Transformer 等概念。网站提供多版本免费试读：Pro版（客观叙述，公开第1/3/5章）、ProA版（艾萨克森式深度人物故事，第1-14章公开）、ProB版（AI名人智慧思维·慢思考方法论）、Max版、Mega版。网站为静态页面，正文可直接阅读与引用。
+
+## 核心页面
+
+- [首页](https://star-sea-go.cn/)：品牌介绍、各版本一览、创作初衷
+- [书籍作品](https://star-sea-go.cn/books/)：各版本说明与试读入口
+- [Pro版·免费试读（第1/3/5章）](https://star-sea-go.cn/books/pro/)：图灵 / 辛顿 / 黄仁勋
+- [ProA版](https://star-sea-go.cn/books/pro-a/)：第1-14章AI名人的完整人物故事
+- [ProB版（AI名人智慧思维）](https://star-sea-go.cn/books/pro-b/)：慢思考方法论与思维工具
+- [Max版](https://star-sea-go.cn/books/max/)：知识库大合集
+- [Mega版](https://star-sea-go.cn/books/mega/)：全内容终极版
+- [购买渠道](https://star-sea-go.cn/purchase/)：版本对比与购买方式
+- [技术服务](https://star-sea-go.cn/tech/)：技术交流与合作
+- [许可与合作](https://star-sea-go.cn/license/)：版权声明、隐私政策、使用条款
+
+## 版权说明
+
+本站内容遵循 CC BY-NC-SA 4.0 许可。引用请注明出处链接。

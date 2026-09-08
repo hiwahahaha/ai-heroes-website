@@ -1,9 +1,15 @@
 import { defineConfig } from 'vitepress'
 
+// ===== 品牌与定位常量（SEO/GEO 全局复用，单点维护）=====
+const BRAND = 'AI名人传'
+const SITE_URL = 'https://star-sea-go.cn'
+const SITE_DESC = 'AI名人传：给孩子讲AI的人工智能启蒙书。通过100位AI名人的真实故事（从图灵到GPT），激发学生与孩子的学习兴趣，轻松开启AI启蒙，快速入门人工智能。'
+const BRAND_KEYWORDS = 'AI名人传,给孩子讲AI,AI启蒙,100位AI名人,AI名人故事,人工智能启蒙,快速学AI,AI名人传记,名人故事学AI,深度学习,图灵,AI教育'
+
 export default defineConfig({
-  title: '书籍:《AI名人传》',
-  titleTemplate: ':title — 书籍:《AI名人传》',
-  description: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。',
+  title: BRAND,
+  titleTemplate: `:title - ${BRAND}`,
+  description: SITE_DESC,
 
   head: [
     // Cloudflare Web Analytics（仅站长可见，Dashboard 内查看）
@@ -16,69 +22,106 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#f5f0e8' }],
     // SEO - 安全头（通过meta实现，GitHub Pages不支持HTTP头）
     ['meta', { 'http-equiv': 'X-Frame-Options', content: 'DENY' }],
-    ['meta', { name: 'keywords', content: 'AI名人传,人工智能,AI启蒙教育,AI应用,知识库,AI名人智慧思维,hermes实战,图灵,辛顿,李飞飞,黄仁勋,深度学习,人物传记,ChatGPT,AI书籍,AI启蒙' }],
+    ['meta', { name: 'keywords', content: BRAND_KEYWORDS }],
     ['meta', { name: 'author', content: 'Oliver' }],
     ['meta', { name: 'robots', content: 'index, follow' }],
     // Open Graph
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'AI名人传 — 从图灵到GPT的史诗历程' }],
-    ['meta', { property: 'og:description', content: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。' }],
-    ['meta', { property: 'og:url', content: 'https://star-sea-go.cn/' }],
-    ['meta', { property: 'og:site_name', content: 'AI名人传' }],
+    ['meta', { property: 'og:title', content: `${BRAND}：给孩子讲AI · 100位AI名人的故事` }],
+    ['meta', { property: 'og:description', content: SITE_DESC }],
+    ['meta', { property: 'og:site_name', content: BRAND }],
     ['meta', { property: 'og:locale', content: 'zh_CN' }],
-    ['meta', { property: 'og:image', content: 'https://star-sea-go.cn/og-image.png' }],
+    ['meta', { property: 'og:image', content: `${SITE_URL}/og-image.png` }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
-    ['meta', { property: 'og:image:alt', content: 'AI名人传 — 从图灵到GPT的史诗历程' }],
+    ['meta', { property: 'og:image:alt', content: `${BRAND}：给孩子讲AI的100位AI名人故事` }],
     // Twitter Card
-    ['meta', { name: 'twitter:card', content: 'summary' }],
-    ['meta', { name: 'twitter:title', content: 'AI名人传 — 从图灵到GPT的史诗历程' }],
-    ['meta', { name: 'twitter:description', content: '《AI名人传：那些让"龙虾"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。' }],
-    // Canonical
-    ['link', { rel: 'canonical', href: 'https://star-sea-go.cn/' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: `${BRAND}：给孩子讲AI · 100位AI名人的故事` }],
+    ['meta', { name: 'twitter:description', content: SITE_DESC }],
+    ['meta', { name: 'twitter:image', content: `${SITE_URL}/og-image.png` }],
     // Sitemap hint
     ['link', { rel: 'sitemap', type: 'application/xml', title: 'Sitemap', href: '/sitemap.xml' }],
-    // JSON-LD 结构化数据 (Book + Organization)
-    ['script', { type: 'application/ld+json', innerHTML: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Book",
-      "name": "AI名人传",
-      "alternateName": "AI Heroes Biography",
-      "description": "《AI名人传：那些让\"龙虾\"活起来的人——Pro/Max/Mega版》——以人物为线索，以故事为载体，讲述AI从图灵到GPT的史诗历程，品味20多位AI名人的百味人生与智慧，解析AI技术的迭代演进与发展，分享AI Agent热门场景下的落地实践与交流。适合从AI启蒙到从业者等不同阶段的读者。",
-      "author": {
-        "@type": "Person",
-        "name": "Oliver",
-        "url": "https://star-sea-go.cn"
-      },
-      "url": "https://star-sea-go.cn",
-      "inLanguage": "zh-CN",
-      "genre": "Technology / Biography / Education",
-      "about": [
-        { "@type": "Thing", "name": "人工智能" },
-        { "@type": "Thing", "name": "深度学习" },
-        { "@type": "Thing", "name": "人物传记" },
-        { "@type": "Thing", "name": "AI启蒙教育" },
-        { "@type": "Thing", "name": "AI应用" },
-        { "@type": "Thing", "name": "知识库" },
-        { "@type": "Thing", "name": "AI名人智慧思维" }
-      ],
-      "hasPart": [
-        { "@type": "BookChapter", "name": "第1章 — 图灵", "position": 1 },
-        { "@type": "BookChapter", "name": "第2章 — 辛顿", "position": 2 },
-        { "@type": "BookChapter", "name": "第3章 — 黄仁勋", "position": 3 },
-        { "@type": "BookChapter", "name": "第4章 — 苏茨克维", "position": 4 },
-        { "@type": "BookChapter", "name": "第5章 — 李飞飞", "position": 5 }
-      ]
-    }, null, 2) }],
-    ['script', { type: 'application/ld+json', innerHTML: JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "AI名人传",
-      "url": "https://star-sea-go.cn",
-      "logo": "https://star-sea-go.cn/favicon.ico",
-      "description": "AI名人传 — 从图灵到GPT的史诗历程，以人物为线索讲述AI背后的真实英雄"
-    }, null, 2) }],
+    // 说明：canonical / og:url / JSON-LD 结构化数据在下方 transformHead 中按页面动态生成（每页独立）
   ],
+
+  // ==========================================
+  // 动态 per-page SEO/GEO：canonical、og:url、JSON-LD
+  // 坑：VitePress head 数组是全局静态；canonical/og:url 必须每页独立。
+  // TransformContext 字段是 pageData（含 url/title/description），不是 page.url。
+  // JSON-LD 必须用三元素格式 [tag, attrs, innerHTML] 才会写入 <script> 内容，
+  // 放 attrs.innerHTML 会被渲染成属性，结构化数据完全失效。
+  // ==========================================
+  transformHead({ pageData }) {
+    // 页面真实 URL：优先 pageData.url，缺失时由 relativePath 推导
+    let pageUrl = (pageData && pageData.url) || ''
+    if (!pageUrl && pageData && pageData.relativePath) {
+      const rp = pageData.relativePath.replace(/\.md$/, '')
+      pageUrl = rp === 'index' ? '/' : `/${rp}`
+    }
+    if (!pageUrl.startsWith('/')) pageUrl = '/' + pageUrl
+    // 规范化：目录 index 页 canonical 应为 /purchase/ 而非 /purchase/index
+    if (pageUrl !== '/' && pageUrl.endsWith('/index')) pageUrl = pageUrl.slice(0, -5)
+    if (pageUrl.endsWith('.html')) pageUrl = pageUrl.slice(0, -5)
+    const url = SITE_URL + (pageUrl === '/' ? '/' : pageUrl)
+    const title = (pageData && pageData.title) || BRAND
+    const desc = (pageData && pageData.description) || SITE_DESC
+    const topicTags = ['给孩子讲AI', 'AI启蒙', '100位AI名人', 'AI名人故事', '人工智能']
+      .map((n) => ({ '@type': 'Thing', name: n }))
+
+    const ld = pageUrl === '/'
+      ? {
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'WebSite',
+              '@id': `${SITE_URL}/#website`,
+              url: `${SITE_URL}/`,
+              name: BRAND,
+              description: SITE_DESC,
+              inLanguage: 'zh-CN',
+              publisher: { '@id': `${SITE_URL}/#organization` }
+            },
+            {
+              '@type': 'Organization',
+              '@id': `${SITE_URL}/#organization`,
+              name: BRAND,
+              alternateName: 'AI Heroes Biography',
+              url: `${SITE_URL}/`,
+              logo: `${SITE_URL}/favicon.ico`,
+              description: SITE_DESC
+            },
+            {
+              '@type': 'Book',
+              name: BRAND,
+              alternateName: 'AI Heroes Biography',
+              url: `${SITE_URL}/`,
+              inLanguage: 'zh-CN',
+              description: SITE_DESC,
+              genre: ['人物传记', '人工智能', 'AI启蒙教育'],
+              author: { '@type': 'Person', name: 'Oliver', url: SITE_URL },
+              about: topicTags
+            }
+          ]
+        }
+      : {
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          '@id': `${url}#webpage`,
+          url,
+          name: title,
+          description: desc,
+          inLanguage: 'zh-CN',
+          about: topicTags,
+          isPartOf: { '@id': `${SITE_URL}/#website`, name: BRAND, url: `${SITE_URL}/` }
+        }
+
+    return [
+      ['link', { rel: 'canonical', href: url }],
+      ['meta', { property: 'og:url', content: url }],
+      ['script', { type: 'application/ld+json' }, JSON.stringify(ld)]
+    ]
+  },
 
   // Clean URLs (no .html extension)
   cleanUrls: true,

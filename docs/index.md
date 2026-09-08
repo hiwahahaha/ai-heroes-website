@@ -1,4 +1,5 @@
 ---
+title: AI名人传：给孩子讲AI的100位AI名人故事
 next:
   text: '书籍作品'
   link: '/books/'
